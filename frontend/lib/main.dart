@@ -1,4 +1,5 @@
 import 'package:flip_cash/screens/SelectCountryScreen.dart';
+import 'package:flip_cash/screens/Splash_Screen.dart';
 import 'package:flutter/material.dart';
 
 
@@ -17,7 +18,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: SelectCountryScreen(),
+      home: SplashScreen(),
+      routes: {
+        '/home': (context) => SelectCountryScreen(),
+      },
     );
   }
 }

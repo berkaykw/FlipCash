@@ -1,3 +1,4 @@
+import 'package:flip_cash/screens/CurrencyConvertScreen.dart';
 import 'package:flip_cash/widgets/Custom_Button.dart';
 import 'package:flip_cash/widgets/Custom_HeaderText.dart';
 import 'package:flutter/material.dart';
@@ -197,7 +198,15 @@ class _SelectSpentCurrencyScreenState extends State<SelectSpentCurrencyScreen> {
               ? Padding(
                 padding: const EdgeInsets.only(bottom: 70, left: 25,right: 25 ),
                 child: CustomButton(
-                  onPressed: () {},
+                  onPressed: () {
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => CurrencyConvertScreen(),
+                      ),
+                    );
+                  },
                   text: "Continue",
                   backgroundColor: Colors.black87,
                   borderRadius: 12,
