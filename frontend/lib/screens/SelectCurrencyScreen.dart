@@ -206,7 +206,9 @@ class _SelectCurrencyScreenState extends State<SelectCurrencyScreen> {
                       MaterialPageRoute(
                         builder:
                             (context) => SelectSpentCurrencyScreen(
-                              countryCurrency: selectedCurrency!,
+                              countryName: widget.countryName,
+                              baseCurrency: selectedCurrency!,
+                              countryFlag: widget.countryFlag, 
                             ),
                       ),
                     );

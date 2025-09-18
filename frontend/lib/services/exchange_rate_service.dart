@@ -2,20 +2,19 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ExchangeRateService {
-  final String apiKey = "b5126b4ce2295f061eec459d";
+  // Android emulator: 10.0.2.2, iOS: localhost, gerçek cihaz: bilgisayar IP'si
+  final String baseUrl = "http://10.0.2.2:3000";
 
-  /// Baz para (örnek: "USD") için tüm döviz kurlarını getirir
   Future<Map<String, double>?> getExchangeRates(String base) async {
-    final url = Uri.parse("https://v6.exchangerate-api.com/v6/$apiKey/latest/$base");
+    final url = Uri.parse("$baseUrl/rates/$base");
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
 
-      if (data["result"] == "success") {
-        // Map<String, double> olarak dönüştür
+      if (data["rates"] != null) {
         final Map<String, double> rates = Map<String, double>.from(
-          data["conversion_rates"].map((key, value) => MapEntry(key, (value as num).toDouble())),
+          data["rates"].map((key, value) => MapEntry(key, (value as num).toDouble())),
         );
         return rates;
       }

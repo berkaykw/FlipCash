@@ -1,15 +1,19 @@
-import 'package:flip_cash/screens/CurrencyConvertScreen.dart';
+import 'package:flip_cash/screens/ConfirmSelectionScreen.dart';
 import 'package:flip_cash/widgets/Custom_Button.dart';
 import 'package:flip_cash/widgets/Custom_HeaderText.dart';
 import 'package:flutter/material.dart';
 import 'package:flip_cash/services/exchange_rate_service.dart';
 
 class SelectSpentCurrencyScreen extends StatefulWidget {
-  final String countryCurrency;
+  final String countryName;
+  final String baseCurrency; 
+  final String countryFlag;
 
   const SelectSpentCurrencyScreen({
     super.key,
-    required this.countryCurrency,
+    required this.countryName,
+    required this.baseCurrency,
+    required this.countryFlag,
   });
 
   @override
@@ -203,7 +207,12 @@ class _SelectSpentCurrencyScreenState extends State<SelectSpentCurrencyScreen> {
                       context,
                       MaterialPageRoute(
                         builder:
-                            (context) => CurrencyConvertScreen(),
+                            (context) => ConfirmSelectionScreen(
+                              countryName: widget.countryName,       // ülkedeki para birimi veya ülke adı
+                              countryFlag: widget.countryFlag,       // harcayacağı para birimi veya bayrak
+                              baseCurrency: widget.baseCurrency,         // kullanıcının kendi para birimi
+                              spentCurrency: selectedSpentCurrency!,     // harcayacağı para birimi
+                            ),
                       ),
                     );
                   },
