@@ -40,6 +40,7 @@ class _SelectCurrencyScreenState extends State<SelectCurrencyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 18, 21, 52),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(top: 10.0, left: 30.0, right: 30.0),
@@ -49,13 +50,13 @@ class _SelectCurrencyScreenState extends State<SelectCurrencyScreen> {
               Align(
                 alignment: Alignment.topLeft,
                 child: IconButton(
-                  icon: Icon(Icons.arrow_back_ios, size: 20),
+                  icon: Icon(Icons.arrow_back_ios, size: 20,color: Colors.white,),
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
               CustomHeaderText(
                 text: "Select Your Base Currency",
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 32,
                 fontWeight: FontWeight.w600,
                 textAlign: TextAlign.start,
@@ -64,133 +65,83 @@ class _SelectCurrencyScreenState extends State<SelectCurrencyScreen> {
 
               // ListTile'ların bulunduğu sabit alan
               Container(
-                height: 420,
+  height: 420,
+  child: rates == null
+      ? Center(child: CircularProgressIndicator())
+      : ListView(
+          children: [
+            ...mainCurrencies
+                .where((c) => rates!.containsKey(c))
+                .map((currency) {
+              final isSelected = currency == selectedCurrency;
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 6),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
+                  color: Colors.transparent, // burayı şeffaf yaptık
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isSelected ? Colors.green : Colors.transparent,
+                    width: 3,
+                  ),
                 ),
-                child:
-                    rates == null
-                        ? Center(child: CircularProgressIndicator())
-                        : ListView(
-                          children: [
-                            // Önce bilindik para birimleri
-                            ...mainCurrencies
-                                .where((c) => rates!.containsKey(c))
-                                .map((currency) {
-                                  final isSelected =
-                                      currency == selectedCurrency;
-                                  return Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          isSelected
-                                              ? Colors.green.shade50
-                                              : Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color:
-                                            isSelected
-                                                ? Colors.green
-                                                : Colors.grey.shade300,
-                                        width: 1,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.2),
-                                          blurRadius: 4,
-                                          offset: Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: ListTile(
-                                      title: Text(
-                                        currency,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color:
-                                              isSelected
-                                                  ? Colors.green.shade800
-                                                  : Colors.black,
-                                        ),
-                                      ),
-                                      trailing:
-                                          isSelected
-                                              ? Icon(
-                                                Icons.check,
-                                                color: Colors.green,
-                                              )
-                                              : null,
-                                      onTap: () {
-                                        setState(() {
-                                          selectedCurrency = currency;
-                                        });
-                                      },
-                                    ),
-                                  );
-                                }),
-                            // Sonra diğer tüm para birimleri
-                            ...rates!.keys
-                                .where((c) => !mainCurrencies.contains(c))
-                                .map((currency) {
-                                  final isSelected =
-                                      currency == selectedCurrency;
-                                  return Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          isSelected
-                                              ? Colors.green.shade50
-                                              : Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color:
-                                            isSelected
-                                                ? Colors.green
-                                                : Colors.grey.shade300,
-                                        width: 1,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.2),
-                                          blurRadius: 4,
-                                          offset: Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: ListTile(
-                                      title: Text(
-                                        currency,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color:
-                                              isSelected
-                                                  ? Colors.green.shade800
-                                                  : Colors.black,
-                                        ),
-                                      ),
-                                      trailing:
-                                          isSelected
-                                              ? Icon(
-                                                Icons.check,
-                                                color: Colors.green,
-                                              )
-                                              : null,
-                                      onTap: () {
-                                        setState(() {
-                                          selectedCurrency = currency;
-                                        });
-                                      },
-                                    ),
-                                  );
-                                }),
-                          ],
-                        ),
-              ),
+                child: ListTile(
+                  tileColor: Colors.transparent, // ListTile arka planını kaldır
+                  title: Text(
+                    currency,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isSelected ? Colors.green : Colors.white,
+                    ),
+                  ),
+                  trailing: isSelected
+                      ? Icon(Icons.check, color: Colors.green, size: 25)
+                      : null,
+                  onTap: () {
+                    setState(() {
+                      selectedCurrency = currency;
+                    });
+                  },
+                ),
+              );
+            }),
+            ...rates!.keys
+                .where((c) => !mainCurrencies.contains(c))
+                .map((currency) {
+              final isSelected = currency == selectedCurrency;
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isSelected ? Colors.green : Colors.transparent,
+                    width: 2,
+                  ),
+                ),
+                child: ListTile(
+                  tileColor: Colors.transparent,
+                  title: Text(
+                    currency,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isSelected ? Colors.green : Colors.white,
+                    ),
+                  ),
+                  trailing: isSelected
+                      ? Icon(Icons.check, color: Colors.green, size: 25)
+                      : null,
+                  onTap: () {
+                    setState(() {
+                      selectedCurrency = currency;
+                    });
+                  },
+                ),
+              );
+            }),
+          ],
+        ),
+),
+
             ],
           ),
         ),
@@ -214,10 +165,11 @@ class _SelectCurrencyScreenState extends State<SelectCurrencyScreen> {
                     );
                   },
                   text: "Continue",
-                  backgroundColor: Colors.black87,
+                  backgroundColor: Colors.white,
                   borderRadius: 12,
                   width: double.infinity,
                   height: 45,
+                  textColor: Colors.black,
                 ),
               )
               : null,

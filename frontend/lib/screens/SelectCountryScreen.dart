@@ -46,6 +46,7 @@ class _SelectCountryScreenState extends State<SelectCountryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 18, 21, 52),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -55,7 +56,7 @@ class _SelectCountryScreenState extends State<SelectCountryScreen> {
               children: [
                 CustomHeaderText(
                   text: "Which country are you traveling to?",
-                  color: Colors.black,
+                  color: Colors.white,
                   fontSize: 37,
                   fontWeight: FontWeight.w600,
                   textAlign: TextAlign.start,
@@ -65,6 +66,7 @@ class _SelectCountryScreenState extends State<SelectCountryScreen> {
                   controller: _searchController,
                   prefix_icon: Icon(Icons.search),
                   hint_text: "Search Country",
+                  prefixIcon_color: Colors.white,
                 ),
                 SizedBox(height: 20),
                 SizedBox(
@@ -90,12 +92,12 @@ class _SelectCountryScreenState extends State<SelectCountryScreen> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
-                            color: isSelected ? Colors.black : Colors.black87,
+                            color: isSelected ? Colors.white : Colors.white,
                           ),
                         ),
                         trailing:
                             isSelected
-                                ? Icon(Icons.check, color: Colors.black,size: 26,)
+                                ? Icon(Icons.check, color: Colors.white,size: 26,)
                                 : null,
                       );
                     },
@@ -121,10 +123,11 @@ class _SelectCountryScreenState extends State<SelectCountryScreen> {
                     }
                   },
                   text: "Continue",
-                  backgroundColor: Colors.black87,
+                  backgroundColor: Colors.white,
                   borderRadius: 12,
                   width: double.infinity,
                   height: 45,
+                  textColor: Colors.black,
                 ),
               ],
             ),

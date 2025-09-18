@@ -20,6 +20,7 @@ class CustomTextfield extends StatelessWidget {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
+        hintStyle: TextStyle(color: Colors.white),
         hintText: hint_text,
         prefixIcon: prefix_icon,
         prefixIconColor: prefixIcon_color,
@@ -28,7 +29,7 @@ class CustomTextfield extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey[800]!, width: 2),
+          borderSide: BorderSide(color: Colors.white, width: 2),
           borderRadius: BorderRadius.circular(10),
         ),
       ),
