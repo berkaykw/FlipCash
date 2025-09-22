@@ -6,7 +6,7 @@ import 'package:flip_cash/services/exchange_rate_service.dart';
 
 class SelectSpentCurrencyScreen extends StatefulWidget {
   final String countryName;
-  final String baseCurrency; 
+  final String baseCurrency;
   final String countryFlag;
 
   const SelectSpentCurrencyScreen({
@@ -24,7 +24,18 @@ class _SelectSpentCurrencyScreenState extends State<SelectSpentCurrencyScreen> {
   Map<String, double>? rates;
   String? selectedSpentCurrency;
 
-  final List<String> mainCurrencies = ["USD", "EUR", "GBP", "JPY", "TRY"];
+  final List<String> mainCurrencies = ["USD","EUR","GBP","JPY","TRY","AUD","CAD","CHF","CNY","HKD","NZD","SEK","NOK","SGD","MXN","ZAR","KRW","INR","BRL","RUB"];
+
+  final Map<String, String> currencyToCountryCode = {
+    'USD': 'US', 'EUR': 'EU', 'GBP': 'GB', 'JPY': 'JP', 'TRY': 'TR',
+    'AUD': 'AU', 'CAD': 'CA', 'CHF': 'CH', 'CNY': 'CN', 'HKD': 'HK',
+    'NZD': 'NZ', 'SEK': 'SE', 'NOK': 'NO', 'SGD': 'SG', 'MXN': 'MX',
+    'ZAR': 'ZA', 'KRW': 'KR', 'INR': 'IN', 'BRL': 'BR', 'RUB': 'RU',
+  };
+
+  String countryCodeToFlag(String countryCode) {
+    return countryCode.toUpperCase().codeUnits.map((c) => String.fromCharCode(c + 127397)).join();
+  }
 
   @override
   void initState() {
@@ -64,119 +75,128 @@ class _SelectSpentCurrencyScreenState extends State<SelectSpentCurrencyScreen> {
                 textAlign: TextAlign.start,
               ),
               const SizedBox(height: 20),
+              Expanded(
+                child: rates == null
+                    ? Center(child: CircularProgressIndicator())
+                    : ListView(
+                        children: [
+                          ...mainCurrencies
+                              .where((c) => rates!.containsKey(c))
+                              .map((currency) {
+                            final isSelected = currency == selectedSpentCurrency;
+                            final isoCode = currencyToCountryCode[currency];
+                            final flag = isoCode != null ? countryCodeToFlag(isoCode) : '';
+                            final displayName = currency;
 
-              // ListTile'ların bulunduğu sabit alan
-              Container(
-  height: 420,
-  child: rates == null
-      ? Center(child: CircularProgressIndicator())
-      : ListView(
-          children: [
-            // Önce bilindik para birimleri
-            ...mainCurrencies
-                .where((c) => rates!.containsKey(c))
-                .map((currency) {
-              final isSelected = currency == selectedSpentCurrency;
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.transparent, // arka plan şeffaf
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isSelected ? Colors.green : Colors.transparent,
-                    width: 3,
-                  ),
-                ),
-                child: ListTile(
-                  tileColor: Colors.transparent, // ListTile arka planını kaldır
-                  title: Text(
-                    currency,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.green : Colors.white,
-                    ),
-                  ),
-                  trailing: isSelected
-                      ? Icon(Icons.check, color: Colors.green, size: 25)
-                      : null,
-                  onTap: () {
-                    setState(() {
-                      selectedSpentCurrency = currency;
-                    });
-                  },
-                ),
-              );
-            }),
-            // Sonra diğer tüm para birimleri
-            ...rates!.keys
-                .where((c) => !mainCurrencies.contains(c))
-                .map((currency) {
-              final isSelected = currency == selectedSpentCurrency;
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isSelected ? Colors.green : Colors.transparent,
-                    width: 2,
-                  ),
-                ),
-                child: ListTile(
-                  tileColor: Colors.transparent,
-                  title: Text(
-                    currency,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.green : Colors.white,
-                    ),
-                  ),
-                  trailing: isSelected
-                      ? Icon(Icons.check, color: Colors.green, size: 25)
-                      : null,
-                  onTap: () {
-                    setState(() {
-                      selectedSpentCurrency = currency;
-                    });
-                  },
-                ),
-              );
-            }),
-          ],
-        ),
-),
+                            return Container(
+                              margin: const EdgeInsets.symmetric(vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isSelected ? Colors.green : Colors.transparent,
+                                  width: 3,
+                                ),
+                              ),
+                              child: ListTile(
+                                tileColor: Colors.transparent,
+                                title: Row(
+                                  children: [
+                                    if (flag.isNotEmpty)
+                                      Text(flag, style: const TextStyle(fontSize: 24)),
+                                    if (flag.isNotEmpty) const SizedBox(width: 10),
+                                    Text(displayName,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: isSelected ? Colors.green : Colors.white)),
+                                  ],
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    selectedSpentCurrency = currency;
+                                  });
+                                },
+                                trailing: isSelected
+                                    ? Icon(Icons.check, color: Colors.green)
+                                    : null,
+                              ),
+                            );
+                          }),
+                          ...rates!.keys
+                              .where((c) => !mainCurrencies.contains(c))
+                              .map((currency) {
+                            final isSelected = currency == selectedSpentCurrency;
+                            final isoCode = currencyToCountryCode[currency];
+                            final flag = isoCode != null ? countryCodeToFlag(isoCode) : '';
+                            final displayName = currency;
+
+                            return Container(
+                              margin: const EdgeInsets.symmetric(vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isSelected ? Colors.green : Colors.transparent,
+                                  width: 2,
+                                ),
+                              ),
+                              child: ListTile(
+                                tileColor: Colors.transparent,
+                                title: Row(
+                                  children: [
+                                    if (flag.isNotEmpty)
+                                      Text(flag, style: const TextStyle(fontSize: 24)),
+                                    if (flag.isNotEmpty) const SizedBox(width: 10),
+                                    Text(displayName,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: isSelected ? Colors.green : Colors.white)),
+                                  ],
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    selectedSpentCurrency = currency;
+                                  });
+                                },
+                                trailing: isSelected
+                                    ? Icon(Icons.check, color: Colors.green)
+                                    : null,
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+              ),
             ],
           ),
         ),
       ),
-      bottomNavigationBar:
-          selectedSpentCurrency != null
-              ? Padding(
-                padding: const EdgeInsets.only(bottom: 70, left: 25,right: 25 ),
-                child: CustomButton(
-                  onPressed: () {
-                      Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => ConfirmSelectionScreen(
-                              countryName: widget.countryName,       // ülkedeki para birimi veya ülke adı
-                              countryFlag: widget.countryFlag,       // harcayacağı para birimi veya bayrak
-                              baseCurrency: widget.baseCurrency,         // kullanıcının kendi para birimi
-                              spentCurrency: selectedSpentCurrency!,     // harcayacağı para birimi
-                            ),
+      bottomNavigationBar: selectedSpentCurrency != null
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 70, left: 25,right: 25 ),
+              child: CustomButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ConfirmSelectionScreen(
+                        countryName: widget.countryName,
+                        countryFlag: widget.countryFlag,
+                        baseCurrency: widget.baseCurrency,
+                        spentCurrency: selectedSpentCurrency!,
                       ),
-                    );
-                  },
-                  text: "Continue",
-                  backgroundColor: Colors.white,
-                  borderRadius: 12,
-                  width: double.infinity,
-                  height: 45,
-                  textColor: Colors.black,
-                ),
-              )
-              : null,
+                    ),
+                  );
+                },
+                text: "Continue",
+                backgroundColor: Colors.white,
+                borderRadius: 12,
+                width: double.infinity,
+                height: 45,
+                textColor: Colors.black,
+              ),
+            )
+          : null,
     );
   }
 }

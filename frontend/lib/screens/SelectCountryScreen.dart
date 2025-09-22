@@ -67,6 +67,7 @@ class _SelectCountryScreenState extends State<SelectCountryScreen> {
                   prefix_icon: Icon(Icons.search),
                   hint_text: "Search Country",
                   prefixIcon_color: Colors.white,
+                  hintText_color: Colors.white,
                 ),
                 SizedBox(height: 20),
                 SizedBox(

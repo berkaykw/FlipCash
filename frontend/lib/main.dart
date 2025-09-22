@@ -1,7 +1,6 @@
-import 'package:flip_cash/screens/SelectCountryScreen.dart';
-import 'package:flip_cash/screens/Splash_Screen.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flip_cash/screens/Splash_Screen.dart';
+import 'package:flip_cash/screens/SelectCountryScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,4 +24,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

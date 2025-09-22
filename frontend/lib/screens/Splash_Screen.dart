@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flip_cash/screens/CurrencyConvertScreen.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with TickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
   late AnimationController _logoController;
   late AnimationController _planeController;
   late AnimationController _fadeController;
-  
+
   late Animation<double> _logoScale;
   late Animation<double> _planeRotation;
   late Animation<double> _fadeAnimation;
@@ -18,19 +21,18 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-    
     _logoController = AnimationController(
-      duration: Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    
+
     _planeController = AnimationController(
-      duration: Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
-    
+
     _fadeController = AnimationController(
-      duration: Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
 
@@ -47,21 +49,52 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _startAnimation();
+    _navigateAfterSplash(); // SharedPreferences kontrolü
+  }
+
+  // Splash sonrası yönlendirme
+  Future<void> _navigateAfterSplash() async {
+    await Future.delayed(const Duration(seconds: 3));
+
+    final prefs = await SharedPreferences.getInstance();
+    final savedCountryName = prefs.getString('countryName');
+    final savedCountryFlag = prefs.getString('countryFlag');
+    final savedBaseCurrency = prefs.getString('baseCurrency');
+    final savedSpentCurrency = prefs.getString('spentCurrency');
+
+    if (savedCountryName != null &&
+        savedCountryFlag != null &&
+        savedBaseCurrency != null &&
+        savedSpentCurrency != null) {
+      // Kaydedilmiş seçim varsa Convert ekranına git
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CurrencyConvertScreen(
+            countryName: savedCountryName,
+            countryFlag: savedCountryFlag,
+            baseCurrency: savedBaseCurrency,
+            spentCurrency: savedSpentCurrency,
+          ),
+        ),
+      );
+    } else {
+      // Kaydedilmemişse seçim ekranına git
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, '/home');
+    }
   }
 
   void _startAnimation() async {
-    await Future.delayed(Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 500));
     _logoController.forward();
-    
-    await Future.delayed(Duration(milliseconds: 500));
-    _planeController.forward();
-    
-    await Future.delayed(Duration(milliseconds: 800));
-    _fadeController.forward();
 
-    // 3 saniye sonra ana sayfaya geç
-    await Future.delayed(Duration(seconds: 3));
-    Navigator.pushReplacementNamed(context, '/home');
+    await Future.delayed(const Duration(milliseconds: 500));
+    _planeController.forward();
+
+    await Future.delayed(const Duration(milliseconds: 800));
+    _fadeController.forward();
   }
 
   @override
@@ -75,23 +108,20 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF0A1628), // Koyu mavi arka plan
+      backgroundColor: const Color(0xFF0A1628),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: RadialGradient(
             center: Alignment.center,
             radius: 1.0,
-            colors: [
-              Color(0xFF1A2B4C),
-              Color(0xFF0A1628),
-            ],
+            colors: [Color(0xFF1A2B4C), Color(0xFF0A1628)],
           ),
         ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo Container
+              // Logo ve Animasyon
               AnimatedBuilder(
                 animation: _logoScale,
                 builder: (context, child) {
@@ -102,44 +132,35 @@ class _SplashScreenState extends State<SplashScreen>
                       height: 150,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30),
-                        gradient: LinearGradient(
+                        gradient: const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [
-                            Color.fromARGB(255, 15, 35, 58),
-                            Color.fromARGB(255, 10, 24, 53),
-                          ],
+                          colors: [Color(0xFF0F233A), Color(0xFF0A1835)],
                         ),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.3),
                             spreadRadius: 5,
                             blurRadius: 15,
-                            offset: Offset(0, 8),
+                            offset: const Offset(0, 8),
                           ),
                         ],
                       ),
                       child: Stack(
                         children: [
-                          // Döviz Sembolleri ve Oklar
                           Center(
                             child: CustomPaint(
-                              size: Size(100, 100),
+                              size: const Size(100, 100),
                               painter: CurrencyExchangePainter(),
                             ),
                           ),
-                          // Uçak
                           Center(
                             child: AnimatedBuilder(
                               animation: _planeRotation,
                               builder: (context, child) {
                                 return Transform.rotate(
                                   angle: _planeRotation.value,
-                                  child: Icon(
-                                    Icons.flight,
-                                    color: Colors.white,
-                                    size: 40,
-                                  ),
+                                  child: const Icon(Icons.flight, color: Colors.white, size: 40),
                                 );
                               },
                             ),
@@ -150,41 +171,32 @@ class _SplashScreenState extends State<SplashScreen>
                   );
                 },
               ),
-              
-              SizedBox(height: 40),
-              
+              const SizedBox(height: 40),
               // App Title
               AnimatedBuilder(
                 animation: _fadeAnimation,
                 builder: (context, child) {
                   return Opacity(
                     opacity: _fadeAnimation.value,
-                    child: Column(
-                      children: [
-                        Text(
-                          'Flip Cash',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 2,
-                          ),
-                        ),
-                      ],
+                    child: const Text(
+                      'Flip Cash',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                      ),
                     ),
                   );
                 },
               ),
-              
-              SizedBox(height: 50),
-              
-              // Loading Indicator
+              const SizedBox(height: 50),
               AnimatedBuilder(
                 animation: _fadeAnimation,
                 builder: (context, child) {
                   return Opacity(
                     opacity: _fadeAnimation.value,
-                    child: CircularProgressIndicator(
+                    child: const CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       strokeWidth: 2,
                     ),
@@ -207,47 +219,30 @@ class CurrencyExchangePainter extends CustomPainter {
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
 
-
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width * 0.35;
 
-    // Çember çizimi
     canvas.drawCircle(center, radius, paint);
 
-    // Dolar ve Euro sembolleri
     final textPainter1 = TextPainter(
-      text: TextSpan(
+      text: const TextSpan(
         text: '\$',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 42,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(color: Colors.white, fontSize: 42, fontWeight: FontWeight.bold),
       ),
       textDirection: TextDirection.ltr,
     );
     textPainter1.layout();
-    textPainter1.paint(
-      canvas,
-      Offset(center.dx - radius * 1.8, center.dy - radius * 2),
-    );
- 
+    textPainter1.paint(canvas, Offset(center.dx - radius * 1.8, center.dy - radius * 2));
+
     final textPainter2 = TextPainter(
-      text: TextSpan(
+      text: const TextSpan(
         text: '€',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 42,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(color: Colors.white, fontSize: 42, fontWeight: FontWeight.bold),
       ),
       textDirection: TextDirection.ltr,
     );
     textPainter2.layout();
-    textPainter2.paint(
-      canvas,
-      Offset(center.dx + radius * 1.05, center.dy + radius * 0.6),
-    );
+    textPainter2.paint(canvas, Offset(center.dx + radius * 1.05, center.dy + radius * 0.6));
   }
 
   @override

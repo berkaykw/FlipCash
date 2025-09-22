@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   country_picker: ^2.0.27
   http: ^1.5.0
+  shared_preferences: ^2.5.1
 
 dev_dependencies:
   flutter_test:
