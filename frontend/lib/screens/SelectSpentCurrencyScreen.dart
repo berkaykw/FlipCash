@@ -24,14 +24,31 @@ class _SelectSpentCurrencyScreenState extends State<SelectSpentCurrencyScreen> {
   Map<String, double>? rates;
   String? selectedSpentCurrency;
 
-  final List<String> mainCurrencies = ["USD","EUR","GBP","JPY","TRY","AUD","CAD","CHF","CNY","HKD","NZD","SEK","NOK","SGD","MXN","ZAR","KRW","INR","BRL","RUB"];
+  final List<String> mainCurrencies = [
+  "USD","EUR","GBP","JPY","TRY","AUD","CAD","CHF","CNY","HKD",
+  "NZD","SEK","NOK","SGD","MXN","ZAR","KRW","INR","BRL","RUB",
+  "COP","ARS","AED","SAR","THB","IDR","PLN","TWD",
+  "DKK","HUF","CZK","ILS","EGP","PKR","VND","MYR","PHP","CLP",
+  "KWD","QAR","BGN","RON","UAH",
+  "MAD","DZD","NGN","GHS","KES","TND","LKR","BDT","MMK","IRR",
+  "IQD","PEN","BOB","PAB","UYU"
+];
 
-  final Map<String, String> currencyToCountryCode = {
-    'USD': 'US', 'EUR': 'EU', 'GBP': 'GB', 'JPY': 'JP', 'TRY': 'TR',
-    'AUD': 'AU', 'CAD': 'CA', 'CHF': 'CH', 'CNY': 'CN', 'HKD': 'HK',
-    'NZD': 'NZ', 'SEK': 'SE', 'NOK': 'NO', 'SGD': 'SG', 'MXN': 'MX',
-    'ZAR': 'ZA', 'KRW': 'KR', 'INR': 'IN', 'BRL': 'BR', 'RUB': 'RU',
-  };
+final Map<String, String> currencyToCountryCode = {
+  'USD': 'US','EUR': 'EU','GBP': 'GB','JPY': 'JP','TRY': 'TR',
+  'AUD': 'AU','CAD': 'CA','CHF': 'CH','CNY': 'CN','HKD': 'HK',
+  'NZD': 'NZ','SEK': 'SE','NOK': 'NO','SGD': 'SG','MXN': 'MX',
+  'ZAR': 'ZA','KRW': 'KR','INR': 'IN','BRL': 'BR','RUB': 'RU',
+  'COP': 'CO','ARS': 'AR','AED': 'AE','SAR': 'SA','THB': 'TH',
+  'IDR': 'ID','PLN': 'PL','TWD': 'TW',
+  'DKK': 'DK','HUF': 'HU','CZK': 'CZ','ILS': 'IL','EGP': 'EG',
+  'PKR': 'PK','VND': 'VN','MYR': 'MY','PHP': 'PH','CLP': 'CL',
+  'KWD': 'KW','QAR': 'QA','BGN': 'BG','RON': 'RO','UAH': 'UA',
+  'MAD': 'MA','DZD': 'DZ','NGN': 'NG','GHS': 'GH','KES': 'KE',
+  'TND': 'TN','LKR': 'LK','BDT': 'BD','MMK': 'MM','IRR': 'IR',
+  'IQD': 'IQ','PEN': 'PE','BOB': 'BO','PAB': 'PA','UYU': 'UY',
+};
+
 
   String countryCodeToFlag(String countryCode) {
     return countryCode.toUpperCase().codeUnits.map((c) => String.fromCharCode(c + 127397)).join();
