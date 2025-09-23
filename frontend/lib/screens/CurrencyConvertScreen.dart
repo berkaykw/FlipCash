@@ -3,7 +3,6 @@ import 'package:flip_cash/widgets/NumberPad.dart';
 import 'package:flutter/material.dart';
 import 'package:flip_cash/services/exchange_rate_service.dart';
 
-
 class CurrencyConvertScreen extends StatefulWidget {
   final String countryName;
   final String countryFlag;
@@ -26,6 +25,11 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
   Map<String, double>? rates;
   String enteredAmount = "0";
   double? convertedAmount;
+
+  late String _spentCurrency;
+  late String _baseCurrency;
+  late String _spentFlag;
+  late String _baseFlag;
 
   final Map<String, String> currencyToCountryCode = {
     'USD': 'US',
@@ -65,12 +69,31 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
   @override
   void initState() {
     super.initState();
+    _spentCurrency = widget.spentCurrency;
+    _baseCurrency = widget.baseCurrency;
+    _spentFlag = widget.countryFlag;
+    _baseFlag = getFlagFromCurrency(widget.baseCurrency);
     _loadCurrencies();
+  }
+
+  void _swapCurrencies() {
+    setState(() {
+      final oldBaseCurrency = _baseCurrency;
+      final oldBaseFlag = _baseFlag;
+
+      _baseCurrency = _spentCurrency;
+      _baseFlag = _spentFlag;
+
+      _spentCurrency = oldBaseCurrency;
+      _spentFlag = oldBaseFlag;
+
+      _loadCurrencies();
+    });
   }
 
   void _loadCurrencies() async {
     final fetchedRates = await ExchangeRateService().getExchangeRates(
-      widget.spentCurrency,
+      _spentCurrency,
     );
     setState(() {
       rates = fetchedRates;
@@ -99,7 +122,7 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
   void _updateConvertedAmount() {
     double? amount = double.tryParse(enteredAmount);
     if (amount != null && rates != null) {
-      double rate = rates![widget.baseCurrency] ?? 1;
+      double rate = rates![_baseCurrency] ?? 1;
       convertedAmount = amount * rate;
     } else {
       convertedAmount = null;
@@ -115,7 +138,7 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
           padding: const EdgeInsets.only(top: 30.0, left: 30.0, right: 30.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [ 
+            children: [
               CustomHeaderText(
                 text: "Convert",
                 color: Colors.white,
@@ -132,16 +155,12 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                 textAlign: TextAlign.start,
               ),
               const SizedBox(height: 20),
-              _currencyBox(
-                widget.countryFlag,
-                widget.spentCurrency,
-                widget.spentCurrency,
-              ),
+              _currencyBox(_spentFlag, _spentCurrency, _spentCurrency),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15),
                 child: Center(
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: _swapCurrencies,
                     icon: const Icon(
                       Icons.swap_vert_outlined,
                       color: Colors.white,
@@ -150,11 +169,7 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                   ),
                 ),
               ),
-              _currencyBox(
-                getFlagFromCurrency(widget.baseCurrency),
-                widget.baseCurrency,
-                widget.baseCurrency,
-              ),
+              _currencyBox(_baseFlag, _baseCurrency, _baseCurrency),
               const SizedBox(height: 10),
               Expanded(
                 child: Padding(
@@ -163,45 +178,55 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       // Miktar + Çevrilen miktar
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                enteredAmount,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 30, 33, 70),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  enteredAmount,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          const Icon(
-                            Icons.arrow_forward_rounded,
-                            color: Colors.grey,
-                            size: 25,
-                          ),
-                          const SizedBox(width: 10),
-                          Flexible(
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                convertedAmount != null
-                                    ? "${convertedAmount!.toStringAsFixed(2)} ${widget.baseCurrency}"
-                                    : "0.00 ${widget.baseCurrency}",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
+                            const SizedBox(width: 10),
+                            const Icon(
+                              Icons.arrow_forward_rounded,
+                              color: Colors.grey,
+                              size: 25,
+                            ),
+                            const SizedBox(width: 10),
+                            Flexible(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  convertedAmount != null
+                                      ? "${convertedAmount!.toStringAsFixed(2)} $_baseCurrency"
+                                      : "0.00 $_baseCurrency",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                      ),
+                      Text(
+                        "1 $_spentCurrency = ${(rates != null ? (rates![_baseCurrency]?.toStringAsFixed(4) ?? '...') : '...')} $_baseCurrency",
+                        style: TextStyle(color: Colors.grey[500], fontSize: 13 , fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: 20),
                       // NumberPad
@@ -212,8 +237,8 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                           onDelete: _onDelete,
                           currencyAmount:
                               convertedAmount != null
-                                  ? "${convertedAmount!.toStringAsFixed(2)} ${widget.baseCurrency}"
-                                  : "0.00 ${widget.baseCurrency}",
+                                  ? "${convertedAmount!.toStringAsFixed(2)} $_baseCurrency"
+                                  : "0.00 $_baseCurrency",
                         ),
                       ),
                     ],
@@ -224,12 +249,11 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                 child: TextButton(
                   onPressed: () {
                     Navigator.pushReplacementNamed(context, '/home');
-                  }, 
-                  child: Text("Change Selections",
-                      style: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: 14,
-                      )),
+                  },
+                  child: Text(
+                    "Change Selections",
+                    style: TextStyle(color: Colors.grey[500], fontSize: 15),
+                  ),
                 ),
               ),
             ],
