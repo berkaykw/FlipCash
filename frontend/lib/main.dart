@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: const Color.fromARGB(255, 18, 21, 52),
       ),
-      themeMode: themeProvider.themeMode,
+      themeMode: themeProvider.themeMode, 
       home: const SplashScreen(),
       routes: {
         '/home': (context) => const SelectCountryScreen(),
