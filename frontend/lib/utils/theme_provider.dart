@@ -14,7 +14,6 @@ class ThemeProvider with ChangeNotifier {
     _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
     notifyListeners();
 
-    // Kaydet
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isDarkMode', isDark);
   }
@@ -22,7 +21,6 @@ class ThemeProvider with ChangeNotifier {
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
 
-    // Eğer hiç kaydedilmemişse varsayılan dark olsun
     final isDark = prefs.getBool('isDarkMode') ?? true;
     _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
     notifyListeners();
