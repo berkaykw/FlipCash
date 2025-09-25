@@ -22,10 +22,14 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = backgroundColor ?? (isDark ? Colors.white : Colors.black);
+    final fgColor = textColor ?? (isDark ? Colors.black : Colors.white);
+
     final button = ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: backgroundColor ?? Theme.of(context).primaryColor,
-        foregroundColor: textColor ?? Colors.white,
+        backgroundColor: bgColor,
+        foregroundColor: fgColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius ?? 12),
         ),
@@ -33,7 +37,7 @@ class CustomButton extends StatelessWidget {
       onPressed: onPressed,
       child: Text(
         text,
-        style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
 

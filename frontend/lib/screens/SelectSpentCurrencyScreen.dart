@@ -70,7 +70,7 @@ final Map<String, String> currencyToCountryCode = {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 18, 21, 52),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(top: 10.0, left: 30.0, right: 30.0),
@@ -78,119 +78,139 @@ final Map<String, String> currencyToCountryCode = {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Align(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                  icon: Icon(Icons.arrow_back_ios,color: Colors.white, size: 20),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
+  alignment: Alignment.topLeft,
+  child: IconButton(
+    icon: Icon(
+      Icons.arrow_back_ios,
+      size: 20,
+      color: Theme.of(context).brightness == Brightness.dark
+          ? Colors.white
+          : Colors.black,
+    ),
+    onPressed: () => Navigator.pop(context),
+  ),
+),
               CustomHeaderText(
                 text: "Choose Your Spending Currency",
-                color: Colors.white,
                 fontSize: 30,
                 fontWeight: FontWeight.w600,
                 textAlign: TextAlign.start,
               ),
               const SizedBox(height: 20),
-              Expanded(
-                child: rates == null
-                    ? Center(child: CircularProgressIndicator())
-                    : ListView(
-                        children: [
-                          ...mainCurrencies
-                              .where((c) => rates!.containsKey(c))
-                              .map((currency) {
-                            final isSelected = currency == selectedSpentCurrency;
-                            final isoCode = currencyToCountryCode[currency];
-                            final flag = isoCode != null ? countryCodeToFlag(isoCode) : '';
-                            final displayName = currency;
+             Expanded(
+  child: rates == null
+      ? const Center(child: CircularProgressIndicator())
+      : ListView(
+          children: [
+            // Öncelikli para birimleri
+            ...mainCurrencies
+                .where((c) => rates!.containsKey(c))
+                .map((currency) {
+              final isSelected = currency == selectedSpentCurrency;
+              final isoCode = currencyToCountryCode[currency];
+              final flag = isoCode != null ? countryCodeToFlag(isoCode) : '';
+              final displayName = currency;
 
-                            return Container(
-                              margin: const EdgeInsets.symmetric(vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: isSelected ? Colors.green : Colors.transparent,
-                                  width: 3,
-                                ),
-                              ),
-                              child: ListTile(
-                                tileColor: Colors.transparent,
-                                title: Row(
-                                  children: [
-                                    if (flag.isNotEmpty)
-                                      Text(flag, style: const TextStyle(fontSize: 24)),
-                                    if (flag.isNotEmpty) const SizedBox(width: 10),
-                                    Text(displayName,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: isSelected ? Colors.green : Colors.white)),
-                                  ],
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    selectedSpentCurrency = currency;
-                                  });
-                                },
-                                trailing: isSelected
-                                    ? Icon(Icons.check, color: Colors.green)
-                                    : null,
-                              ),
-                            );
-                          }),
-                          ...rates!.keys
-                              .where((c) => !mainCurrencies.contains(c))
-                              .map((currency) {
-                            final isSelected = currency == selectedSpentCurrency;
-                            final isoCode = currencyToCountryCode[currency];
-                            final flag = isoCode != null ? countryCodeToFlag(isoCode) : '';
-                            final displayName = currency;
+              final isDark = Theme.of(context).brightness == Brightness.dark;
+              final textColor = isSelected
+                  ? (isDark ? Colors.green : Colors.green)
+                  : (isDark ? Colors.white : Colors.black);
+              final borderColor = isSelected
+                  ? (isDark ? Colors.green : Colors.green)
+                  : Colors.transparent;
 
-                            return Container(
-                              margin: const EdgeInsets.symmetric(vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: isSelected ? Colors.green : Colors.transparent,
-                                  width: 2,
-                                ),
-                              ),
-                              child: ListTile(
-                                tileColor: Colors.transparent,
-                                title: Row(
-                                  children: [
-                                    if (flag.isNotEmpty)
-                                      Text(flag, style: const TextStyle(fontSize: 24)),
-                                    if (flag.isNotEmpty) const SizedBox(width: 10),
-                                    Text(displayName,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: isSelected ? Colors.green : Colors.white)),
-                                  ],
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    selectedSpentCurrency = currency;
-                                  });
-                                },
-                                trailing: isSelected
-                                    ? Icon(Icons.check, color: Colors.green)
-                                    : null,
-                              ),
-                            );
-                          }),
-                        ],
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: borderColor, width: 3),
+                ),
+                child: ListTile(
+                  tileColor: Colors.transparent,
+                  title: Row(
+                    children: [
+                      if (flag.isNotEmpty)
+                        Text(flag, style: const TextStyle(fontSize: 24)),
+                      if (flag.isNotEmpty) const SizedBox(width: 10),
+                      Text(
+                        displayName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
+                        ),
                       ),
-              ),
+                    ],
+                  ),
+                  onTap: () {
+                    setState(() {
+                      selectedSpentCurrency = currency;
+                    });
+                  },
+                  trailing: isSelected ? Icon(Icons.check, color: borderColor) : null,
+                ),
+              );
+            }),
+
+            // Diğer para birimleri
+            ...rates!.keys
+                .where((c) => !mainCurrencies.contains(c))
+                .map((currency) {
+              final isSelected = currency == selectedSpentCurrency;
+              final isoCode = currencyToCountryCode[currency];
+              final flag = isoCode != null ? countryCodeToFlag(isoCode) : '';
+              final displayName = currency;
+
+              final isDark = Theme.of(context).brightness == Brightness.dark;
+              final textColor = isSelected
+                  ? (isDark ? Colors.green : Colors.green)
+                  : (isDark ? Colors.white : Colors.black);
+              final borderColor = isSelected
+                  ? (isDark ? Colors.green : Colors.green)
+                  : Colors.transparent;
+
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: borderColor, width: 2),
+                ),
+                child: ListTile(
+                  tileColor: Colors.transparent,
+                  title: Row(
+                    children: [
+                      if (flag.isNotEmpty)
+                        Text(flag, style: const TextStyle(fontSize: 24)),
+                      if (flag.isNotEmpty) const SizedBox(width: 10),
+                      Text(
+                        displayName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    setState(() {
+                      selectedSpentCurrency = currency;
+                    });
+                  },
+                  trailing: isSelected ? Icon(Icons.check, color: borderColor) : null,
+                ),
+              );
+            }),
+          ],
+        ),
+),
             ],
           ),
         ),
       ),
       bottomNavigationBar: selectedSpentCurrency != null
           ? Padding(
-              padding: const EdgeInsets.only(bottom: 70, left: 25,right: 25 ),
+              padding: const EdgeInsets.only(top: 25, bottom: 70, left: 25,right: 25 ),
               child: CustomButton(
                 onPressed: () {
                   Navigator.push(
@@ -206,11 +226,9 @@ final Map<String, String> currencyToCountryCode = {
                   );
                 },
                 text: "Continue",
-                backgroundColor: Colors.white,
                 borderRadius: 12,
                 width: double.infinity,
                 height: 45,
-                textColor: Colors.black,
               ),
             )
           : null,

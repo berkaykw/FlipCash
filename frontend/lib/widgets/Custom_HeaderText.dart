@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class CustomHeaderText extends StatelessWidget {
   final String text;
-  final Color? color;
   final double? fontSize;
   final FontWeight? fontWeight;
   final TextAlign? textAlign;
@@ -10,14 +9,15 @@ class CustomHeaderText extends StatelessWidget {
   const CustomHeaderText({
     super.key,
     required this.text,
-    this.color,
     this.fontSize,
     this.fontWeight,
     this.textAlign,
-    });
+  });
 
   @override
   Widget build(BuildContext context) {
+    final color = Theme.of(context).textTheme.titleLarge?.color ?? Colors.white;
+
     return Text(
       text,
       textAlign: textAlign,

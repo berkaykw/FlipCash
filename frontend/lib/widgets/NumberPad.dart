@@ -21,22 +21,23 @@ class SimpleNumberPad extends StatefulWidget {
 class _SimpleNumberPadState extends State<SimpleNumberPad> {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        // Sayı tuşları
         Expanded(
           child: GridView.count(
             shrinkWrap: true,
             crossAxisCount: 3,
             mainAxisSpacing: 5,
             crossAxisSpacing: 5,
-            childAspectRatio: 2, // Daha uzun dikdörtgen tuşlar
+            childAspectRatio: 2,
             children: [
-              ...List.generate(9, (index) => _numberButton("${index + 1}")),
-              _numberButton("."),
-              _numberButton("0"),
-              _deleteButton(),
+              ...List.generate(9, (index) => _numberButton("${index + 1}", isDark)),
+              _numberButton(".", isDark),
+              _numberButton("0", isDark),
+              _deleteButton(isDark),
             ],
           ),
         ),
@@ -44,30 +45,30 @@ class _SimpleNumberPadState extends State<SimpleNumberPad> {
     );
   }
 
-  Widget _numberButton(String number) {
+  Widget _numberButton(String number, bool isDark) {
     return ElevatedButton(
       onPressed: () => widget.onNumberEntered(number),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.black45,
+        backgroundColor: isDark ? Colors.black87 : Colors.black,
         padding: const EdgeInsets.all(8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       child: Text(
         number,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 20,
-          color: Colors.white,
+          color: isDark ? Colors.white : Colors.white,
           fontWeight: FontWeight.bold,
         ),
       ),
     );
   }
 
-  Widget _deleteButton() {
+  Widget _deleteButton(bool isDark) {
     return ElevatedButton(
       onPressed: widget.onDelete,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
+        backgroundColor: isDark ? Colors.red[400] : Colors.red,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       child: const Icon(Icons.delete_outline, size: 28, color: Colors.white),

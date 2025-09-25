@@ -2,6 +2,8 @@ import 'package:flip_cash/widgets/Custom_HeaderText.dart';
 import 'package:flip_cash/widgets/NumberPad.dart';
 import 'package:flutter/material.dart';
 import 'package:flip_cash/services/exchange_rate_service.dart';
+import 'package:provider/provider.dart';
+import '../utils/theme_provider.dart';
 
 class CurrencyConvertScreen extends StatefulWidget {
   final String countryName;
@@ -114,8 +116,8 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
 
   void _onDelete() {
     setState(() {
-      enteredAmount = "0"; // Girilen miktarı sıfırla
-      convertedAmount = null; // Çevrilen miktarı sıfırla
+      enteredAmount = "0";
+      convertedAmount = null;
     });
   }
 
@@ -131,45 +133,61 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 18, 21, 52),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(top: 30.0, left: 30.0, right: 30.0),
+          padding: const EdgeInsets.only(top: 30, left: 30, right: 30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomHeaderText(
+              Row(
+                children: [
+                  CustomHeaderText(
                 text: "Convert",
-                color: Colors.white,
                 fontSize: 42,
                 fontWeight: FontWeight.bold,
                 textAlign: TextAlign.start,
               ),
+              Spacer(),
+              Switch(
+                  value: themeProvider.themeMode == ThemeMode.dark,
+                  onChanged: (value) {
+                    themeProvider.toggleTheme(value);
+                  },
+                  inactiveTrackColor: Colors.grey[350],
+                  activeColor: Colors.black87,
+                  inactiveThumbColor: Colors.white,
+                  activeTrackColor: Colors.white,
+                ),
+                ],
+              ),
               CustomHeaderText(
                 text:
                     "Destination Country : ${widget.countryFlag} ${widget.countryName}",
-                color: Colors.grey[500],
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
                 textAlign: TextAlign.start,
               ),
               const SizedBox(height: 20),
-              _currencyBox(_spentFlag, _spentCurrency, _spentCurrency),
+              _currencyBox(context, _spentFlag, _spentCurrency, isDark),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15),
                 child: Center(
                   child: IconButton(
                     onPressed: _swapCurrencies,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.swap_vert_outlined,
-                      color: Colors.white,
+                      color: isDark ? Colors.white : Colors.black,
                       size: 40,
                     ),
                   ),
                 ),
               ),
-              _currencyBox(_baseFlag, _baseCurrency, _baseCurrency),
+              _currencyBox(context, _baseFlag, _baseCurrency, isDark),
               const SizedBox(height: 10),
               Expanded(
                 child: Padding(
@@ -177,10 +195,9 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      // Miktar + Çevrilen miktar
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 30, 33, 70),
+                          color: isDark ? Colors.white12 : Colors.black45,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
@@ -191,8 +208,8 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                                 fit: BoxFit.scaleDown,
                                 child: Text(
                                   enteredAmount,
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: isDark ? Colors.white : Colors.white,
                                     fontSize: 32,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -200,9 +217,9 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                               ),
                             ),
                             const SizedBox(width: 10),
-                            const Icon(
+                            Icon(
                               Icons.arrow_forward_rounded,
-                              color: Colors.grey,
+                              color: isDark ? Colors.black : Colors.black,
                               size: 25,
                             ),
                             const SizedBox(width: 10),
@@ -213,8 +230,8 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                                   convertedAmount != null
                                       ? "${convertedAmount!.toStringAsFixed(2)} $_baseCurrency"
                                       : "0.00 $_baseCurrency",
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: isDark ? Colors.white : Colors.white,
                                     fontSize: 32,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -226,10 +243,13 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                       ),
                       Text(
                         "1 $_spentCurrency = ${(rates != null ? (rates![_baseCurrency]?.toStringAsFixed(4) ?? '...') : '...')} $_baseCurrency",
-                        style: TextStyle(color: Colors.grey[500], fontSize: 13 , fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          color: isDark ? Colors.white60 : Colors.grey[700],
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                       const SizedBox(height: 20),
-                      // NumberPad
                       Expanded(
                         child: SimpleNumberPad(
                           amount: enteredAmount,
@@ -252,7 +272,10 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                   },
                   child: Text(
                     "Change Selections",
-                    style: TextStyle(color: Colors.grey[500], fontSize: 15),
+                    style: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.grey[800],
+                      fontSize: 15,
+                    ),
                   ),
                 ),
               ),
@@ -264,16 +287,26 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
   }
 }
 
-Widget _currencyBox(String flag, String name, String code) {
+Widget _currencyBox(
+  BuildContext context,
+  String flag,
+  String code,
+  bool isDark,
+) {
+  final boxColor = isDark ? Colors.white : Colors.black87;
+  final textColor = isDark ? Colors.black : Colors.white;
+  final shadowColor =
+      isDark ? Colors.white.withOpacity(0.3) : Colors.black.withOpacity(0.3);
+
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: boxColor,
       boxShadow: [
         BoxShadow(
-          color: Colors.grey[400]!.withOpacity(0.5),
+          color: shadowColor,
           spreadRadius: 1,
-          blurRadius: 5,
+          blurRadius: 4,
           offset: const Offset(0, 2),
         ),
       ],
@@ -285,8 +318,8 @@ Widget _currencyBox(String flag, String name, String code) {
         const SizedBox(width: 12),
         Text(
           code,
-          style: const TextStyle(
-            color: Colors.black,
+          style: TextStyle(
+            color: textColor,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
