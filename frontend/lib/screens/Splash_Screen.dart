@@ -49,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     );
 
     _startAnimation();
-    _navigateAfterSplash(); // SharedPreferences kontrolü
+    _navigateAfterSplash();
   }
 
   // Splash sonrası yönlendirme

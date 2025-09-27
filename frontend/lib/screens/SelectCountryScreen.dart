@@ -4,8 +4,6 @@ import 'package:flip_cash/widgets/Custom_HeaderText.dart';
 import 'package:flip_cash/widgets/Custom_Textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
-import 'package:provider/provider.dart';
-import '../utils/theme_provider.dart';
 
 class SelectCountryScreen extends StatefulWidget {
   const SelectCountryScreen({super.key});
@@ -46,27 +44,13 @@ class _SelectCountryScreenState extends State<SelectCountryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          Switch(
-            value: themeProvider.themeMode == ThemeMode.dark,
-            onChanged: (value) {
-              themeProvider.toggleTheme(value);
-            },
-            activeColor: Colors.white,
-          ),
-        ],
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0),
+            padding: const EdgeInsets.only(top: 80.0, left: 30.0, right: 30.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
