@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flip_cash/screens/CurrencyConvertScreen.dart';
 
@@ -114,7 +115,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
           gradient: RadialGradient(
             center: Alignment.center,
             radius: 1.0,
-            colors: [Color(0xFF1A2B4C), Color(0xFF0A1628)],
+            colors: [Color(0xFF0E1D35), Color(0xFF091225)],
           ),
         ),
         child: Center(
@@ -128,14 +129,14 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                   return Transform.scale(
                     scale: _logoScale.value,
                     child: Container(
-                      width: 150,
-                      height: 150,
+                      width: 160,
+                      height: 160,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30),
                         gradient: const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [Color(0xFF0F233A), Color(0xFF0A1835)],
+                          colors: [Color(0xFF12253F), Color(0xFF0A1835)],
                         ),
                         boxShadow: [
                           BoxShadow(
@@ -150,7 +151,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                         children: [
                           Center(
                             child: CustomPaint(
-                              size: const Size(100, 100),
+                              size: const Size(115, 115),
                               painter: CurrencyExchangePainter(),
                             ),
                           ),
@@ -160,7 +161,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                               builder: (context, child) {
                                 return Transform.rotate(
                                   angle: _planeRotation.value,
-                                  child: const Icon(Icons.flight, color: Colors.white, size: 40),
+                                  child: const Icon(Icons.flight, color: Colors.white, size: 50),
                                 );
                               },
                             ),
@@ -178,13 +179,21 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                 builder: (context, child) {
                   return Opacity(
                     opacity: _fadeAnimation.value,
-                    child: const Text(
-                      'Flip Cash',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
+                    child: ShaderMask(
+                      shaderCallback: (rect) => const LinearGradient(
+                        colors: [Colors.white, Colors.lightBlueAccent],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ).createShader(rect),
+                      blendMode: BlendMode.srcIn,
+                      child: const Text(
+                        'Flip Cash',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 35,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2,
+                        ),
                       ),
                     ),
                   );
@@ -214,37 +223,95 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 class CurrencyExchangePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..color = Colors.white
-      ..strokeWidth = 3
-      ..style = PaintingStyle.stroke;
+    final Offset center = Offset(size.width / 2, size.height / 2);
+    final double baseRadius = size.width * 0.35;
 
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width * 0.35;
+    // Ana gradient halka
+    final Rect ringRect = Rect.fromCircle(center: center, radius: baseRadius);
+    final SweepGradient sweep = SweepGradient(
+  colors: const [
+    Colors.white,
+    Colors.lightBlueAccent,
+    Colors.lightBlue,
+    Colors.white, 
+  ],
+  stops: const [0.0, 0.6, 0.8, 1.0], 
+  transform: GradientRotation(-math.pi / 2), 
+);
+    final Paint ringPaint = Paint()
+      ..shader = sweep.createShader(ringRect)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 7
+      ..strokeCap = StrokeCap.round;
+    canvas.drawArc(ringRect, 0, 6.28318, false, ringPaint);
 
-    canvas.drawCircle(center, radius, paint);
+    // İnce iç halka (parlaklık)
+    final Paint innerRing = Paint()
+      ..color = Colors.white.withOpacity(0.15)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    canvas.drawCircle(center, baseRadius * 0.82, innerRing);
 
-    final textPainter1 = TextPainter(
-      text: const TextSpan(
-        text: '\$',
-        style: TextStyle(color: Colors.white, fontSize: 42, fontWeight: FontWeight.bold),
-      ),
-      textDirection: TextDirection.ltr,
+    // Noktalı yörünge
+    final double dotsRadius = baseRadius * 1.05;
+    final Paint dotPaint = Paint()..color = Colors.white.withOpacity(0.25);
+    for (int i = 0; i < 28; i++) {
+      final double angle = (6.28318 / 28) * i;
+      final Offset p = Offset(
+        center.dx + dotsRadius * math.cos(angle),
+        center.dy + dotsRadius * math.sin(angle),
+      );
+      canvas.drawCircle(p, 1.7, dotPaint);
+    }
+
+    // İki yönlü düzenli dairesel ok (simetrik)
+    final Paint arrowPaint = Paint()
+      ..color = Colors.white.withOpacity(0.95)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 5
+      ..strokeCap = StrokeCap.round;
+
+    final double arcRadius = baseRadius * 0.78;
+    final Rect arcRect = Rect.fromCircle(center: center, radius: arcRadius);
+
+    // 1. Yay: saat yönünde (negatif sweep) — sol alt -> sağ üst
+    final double start1 = -math.pi * 0.25; // -45°
+    final double sweep1 = -math.pi * 0.9;  // ~-162°
+    final Path arc1 = Path()..addArc(arcRect, start1, sweep1);
+    canvas.drawPath(arc1, arrowPaint);
+    final double endAngle1 = start1 + sweep1;
+    final Offset endPt1 = Offset(
+      center.dx + arcRadius * math.cos(endAngle1),
+      center.dy + arcRadius * math.sin(endAngle1),
     );
-    textPainter1.layout();
-    textPainter1.paint(canvas, Offset(center.dx - radius * 1.8, center.dy - radius * 2));
+    // Saat yönünde gittiğimiz için teğet açısı endAngle - 90°
+    _drawArrowHead(canvas, endPt1.dx, endPt1.dy, endAngle1 - math.pi / 2, arrowPaint.color);
 
-    final textPainter2 = TextPainter(
-      text: const TextSpan(
-        text: '€',
-        style: TextStyle(color: Colors.white, fontSize: 42, fontWeight: FontWeight.bold),
-      ),
-      textDirection: TextDirection.ltr,
+    // 2. Yay: yine saat yönünde — sağ alt -> sol üst (karşı simetrik)
+    final double start2 = math.pi * 0.75;  // 135°
+    final double sweep2 = -math.pi * 0.9;  // ~-162°
+    final Path arc2 = Path()..addArc(arcRect, start2, sweep2);
+    canvas.drawPath(arc2, arrowPaint);
+    final double endAngle2 = start2 + sweep2;
+    final Offset endPt2 = Offset(
+      center.dx + arcRadius * math.cos(endAngle2),
+      center.dy + arcRadius * math.sin(endAngle2),
     );
-    textPainter2.layout();
-    textPainter2.paint(canvas, Offset(center.dx + radius * 1.05, center.dy + radius * 0.6));
+    _drawArrowHead(canvas, endPt2.dx, endPt2.dy, endAngle2 - math.pi / 2, arrowPaint.color);
   }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+void _drawArrowHead(Canvas canvas, double x, double y, double angle, Color color) {
+  final Path head = Path();
+  const double size = 6.0;
+  // Küçük bir üçgen ok ucu
+  head.moveTo(x, y);
+  head.lineTo(x - size * math.cos(angle - 0.4), y - size * math.sin(angle - 0.4));
+  head.lineTo(x - size * math.cos(angle + 0.4), y - size * math.sin(angle + 0.4));
+  head.close();
+  final Paint p = Paint()..color = color..style = PaintingStyle.fill;
+  canvas.drawPath(head, p);
 }

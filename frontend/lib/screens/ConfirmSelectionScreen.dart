@@ -50,27 +50,33 @@ class _ConfirmSelectionScreenState extends State<ConfirmSelectionScreen> {
     final textColor = isDark ? Colors.white : Colors.black87;
     final textSecondaryColor = isDark ? Colors.white70 : Colors.black54;
     final iconColor = isDark ? Colors.white : Colors.black;
+    final Size _screenSize = MediaQuery.of(context).size;
+    final bool _isLandscape = _screenSize.width > _screenSize.height;
 
     return Scaffold(
       backgroundColor: scaffoldBgColor,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 10.0, left: 30.0, right: 30.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Back button
-              Align(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                  icon: Icon(Icons.arrow_back_ios, size: 20, color: iconColor),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-              const SizedBox(height: 10),
+        child: LayoutBuilder(
+          builder: (context, viewportConstraints) => SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10.0, left: 30.0, right: 30.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Back button
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: IconButton(
+                        icon: Icon(Icons.arrow_back_ios, size: 20, color: iconColor),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
 
-              // Country / Currency Card
-              Padding(
+                    // Country / Currency Card
+                    Padding(
   padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
   child: Container(
     decoration: BoxDecoration(
@@ -85,7 +91,8 @@ class _ConfirmSelectionScreenState extends State<ConfirmSelectionScreen> {
       ],
       borderRadius: BorderRadius.circular(20),
     ),
-    height: 150,
+    // Landscape'ta daha kısa kart yüksekliği
+    height: _isLandscape ? 145 : 150,
     width: double.infinity,
     child: Padding(
       padding: const EdgeInsets.all(10.0),
@@ -115,7 +122,7 @@ class _ConfirmSelectionScreenState extends State<ConfirmSelectionScreen> {
           ),
           const SizedBox(height: 10),
           Padding(
-            padding: const EdgeInsets.only(left: 75.0, bottom: 10),
+            padding: EdgeInsets.only(left: _isLandscape ? 60.0 : 75.0, bottom: 10),
             child: Row(
               children: [
                 Text(
@@ -143,48 +150,52 @@ class _ConfirmSelectionScreenState extends State<ConfirmSelectionScreen> {
 ),
 
 
-              // Info Rows
-              Row(
-                children: [
-                  Text(
-                    "Your base currency: ",
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: textSecondaryColor),
-                  ),
-                  Text(
-                    widget.baseCurrency,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Flexible(
-                    child: Text(
-                      "The currency you will spend in ${widget.countryName} : ",
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: textSecondaryColor),
+                    // Info Rows
+                    Row(
+                      children: [
+                        Text(
+                          "Your base currency: ",
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: textSecondaryColor),
+                        ),
+                        Text(
+                          widget.baseCurrency,
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor),
+                        ),
+                      ],
                     ),
-                  ),
-                  Text(
-                    widget.spentCurrency,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            "The currency you will spend in ${widget.countryName} : ",
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: textSecondaryColor),
+                          ),
+                        ),
+                        Text(
+                          widget.spentCurrency,
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(height: _isLandscape ? 10 : 16),
 
-              // Confirm Button
-              Center(
-                child: CustomButton(
-                  onPressed: _confirmSelection,
-                  text: "Confirm Selection",
-                  backgroundColor: isDark ? Colors.white : Colors.black87,
-                  textColor: isDark ? Colors.black : Colors.white,
-                  borderRadius: 12,
-                  width: double.infinity,
-                  height: 45,
+                    // Confirm Button
+                    Center(
+                      child: CustomButton(
+                        onPressed: _confirmSelection,
+                        text: "Confirm Selection",
+                        backgroundColor: isDark ? Colors.white : Colors.black87,
+                        textColor: isDark ? Colors.black : Colors.white,
+                        borderRadius: 12,
+                        width: double.infinity,
+                        height: 45,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),

@@ -46,7 +46,7 @@ class _MyExpensesScreenState extends State<MyExpensesScreen> {
     return Scaffold(
       appBar: AppBar(title: Text("My Expenses",style: TextStyle(fontWeight: FontWeight.bold),), backgroundColor: Colors.transparent),
       body: _expenses.isEmpty
-          ? Center(child: Text("Henüz harcama yok"))
+          ? Center(child: Text("There are no expenses yet.",style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),))
           : ListView.builder(
               itemCount: _expenses.length,
               itemBuilder: (context, index) {
