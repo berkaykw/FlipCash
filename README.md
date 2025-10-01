@@ -1,24 +1,26 @@
-# FlipCash - Frontend
+# FlipCash
 
-This is the **frontend of FlipCash**, a mobile application built using **Flutter**. It enables users to quickly convert currencies while traveling and provides a smooth, interactive experience.
+**FlipCash** is a mobile application designed for travelers.  
+It allows you to view real-time currency exchange rates, quickly convert between different currencies, and easily track your expenses.  
+Built with Flutter, it provides a modern and user-friendly interface.
 
 ## Features
-- 💱 Real-time currency conversion UI
-- 🔄 Quick swap between base and spent currencies
-- 🌍 Easy country and currency selection using **`country_picker`** package
-- 💾 Saves user preferences locally using **Shared Preferences**
-- 🌓 Dark Mode & Light Mode toggle
-- 📱 Responsive and intuitive mobile interface
-- 🧾 **Expenses tracking & management**  
+-  Real-time currency conversion UI  
+-  Quick swap between base and spent currencies  
+-  Easy country and currency selection using **`country_picker`** package  
+-  Save user preferences locally using **Shared Preferences**  
+-  Dark Mode & Light Mode toggle  
+-  Responsive and intuitive mobile interface  
+-  **Expenses tracking & management**  
   - Add and save expenses  
   - List expenses by country and currency  
   - Store expenses locally (via `ExpenseStorage`)  
-  - View total expenses 
+  - View total expenses  
 
 ## Tech Stack
-- **Frontend:** Flutter (Dart)  
+- **Application:** Flutter (Dart)  
   - Packages used:
-    - `country_picker` → selecting countries and currencies
-    - `shared_preferences` → storing user selections locally
-    - `provider: ^6.0.5` → state management (e.g. theme switching, expenses handling)
-- **Backend:** Node.js server providing currency rates via ExchangeRate API
+    - `country_picker` → for selecting countries and currencies  
+    - `shared_preferences` → for storing user selections locally  
+    - `provider: ^6.0.5` → for state management (e.g., theme switching, expenses handling)  
+- **Backend:** Node.js server providing currency rates via ExchangeRate API  
