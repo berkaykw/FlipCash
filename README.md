@@ -12,10 +12,10 @@ Built with Flutter, it provides a modern and user-friendly interface.
 -  Dark Mode & Light Mode toggle  
 -  Responsive and intuitive mobile interface  
 -  **Expenses tracking & management**  
-  - Add and save expenses  
-  - List expenses by country and currency  
-  - Store expenses locally (via `ExpenseStorage`)  
-  - View total expenses  
+    - Add and save expenses  
+    - List expenses by country and currency  
+    - Store expenses locally (via `ExpenseStorage`)  
+    - View total expenses  
 
 ## Tech Stack
 - **Application:** Flutter (Dart)  
