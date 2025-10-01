@@ -43,7 +43,8 @@ class _MyExpensesScreenState extends State<MyExpensesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(  
       appBar: AppBar(title: Text("My Expenses",style: TextStyle(fontWeight: FontWeight.bold),), backgroundColor: Colors.transparent),
       body: _expenses.isEmpty
           ? Center(child: Text("There are no expenses yet.",style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),))
@@ -51,19 +52,28 @@ class _MyExpensesScreenState extends State<MyExpensesScreen> {
               itemCount: _expenses.length,
               itemBuilder: (context, index) {
                 final e = _expenses[index];
-                return ListTile(
-                  leading: Icon(Icons.adjust_sharp),
-                  title: Text(e.description, style: TextStyle(fontWeight: FontWeight.bold)),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text("${e.amount.toStringAsFixed(2)} ${e.currency}",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                      IconButton(
-                        icon: Icon(Icons.delete, color: Colors.redAccent),
-                        onPressed: () => _removeExpense(index),
-                      ),
-                    ],
+                return Card(
+                  color: isDark ? Colors.black87 : Colors.black87,
+                  child: ListTile(
+                    leading: Icon(Icons.adjust_sharp, color: isDark ? Colors.white : Colors.white,),
+                    title: Text(e.description, style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.white,
+                      )),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("${e.amount.toStringAsFixed(2)} ${e.currency}",
+                            style: TextStyle(fontSize: 16, 
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.white,
+                            )),
+                        IconButton(
+                          icon: Icon(Icons.delete, color: Colors.redAccent),
+                          onPressed: () => _removeExpense(index),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
