@@ -8,6 +8,11 @@ This is the **frontend of FlipCash**, a mobile application built using **Flutter
 - Easy country and currency selection using **`country_picker`** package
 - Saves user preferences locally using **Shared Preferences**
 - Responsive and intuitive mobile interface
+-  **Expenses tracking & management**  
+    - Add and save expenses  
+    - List expenses by country and currency  
+    - Store expenses locally (via `ExpenseStorage`)  
+    - View total expenses 
 
 ## Tech Stack
 - **Frontend:** Flutter (Dart)  
