@@ -504,8 +504,8 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                               onPressed: _swapCurrencies,
                               icon: Icon(
                                 Icons.swap_vert_outlined,
-                                color: Colors.white,
-                                size: 25,
+                                color: isDark ? Colors.white : Colors.black,
+                                size: 30,
                               ),
                             ),
                           ),
@@ -531,8 +531,8 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                               Container(
                                 decoration: BoxDecoration(
                                   color:
-                                      isDark ? Colors.white12 : Colors.black45,
-                                  borderRadius: BorderRadius.circular(12),
+                                      isDark ? Colors.white12 : Colors.black54,
+                                  borderRadius: BorderRadius.circular(25),
                                 ),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -544,7 +544,7 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                                           enteredAmount,
                                           style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: 32,
+                                            fontSize: 35,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -553,7 +553,7 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                                     const SizedBox(width: 10),
                                     Icon(
                                       Icons.arrow_forward_rounded,
-                                      color: Colors.black87,
+                                      color: Colors.white,
                                       size: 24,
                                     ),
                                     const SizedBox(width: 10),
@@ -566,7 +566,7 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                                               : "0.00 $_baseCurrency",
                                           style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: 32,
+                                            fontSize: 35,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -575,7 +575,7 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                                   ],
                                 ),
                               ),
-                              SizedBox(height: 5),
+                              SizedBox(height: 15),
                               Row(
                                 children: [
                                   Icon(Icons.info_outline,
@@ -606,7 +606,7 @@ class _CurrencyConvertScreenState extends State<CurrencyConvertScreen> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 12),
+                              SizedBox(height: 20),
                               Expanded(
                                 child: SimpleNumberPad(
                                   amount: enteredAmount,

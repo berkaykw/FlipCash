@@ -44,31 +44,60 @@ class _SelectCountryScreenState extends State<SelectCountryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double screenHeight = screenSize.height;
+    final double availableHeight = screenHeight - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom;
+    
+    // Dinamik yükseklik hesaplaması
+    final double headerHeight = 120; // Header text + padding
+    final double searchFieldHeight = 80; // Search field + padding
+    final double buttonHeight = 105; // Button + padding
+    final double listViewHeight = availableHeight - headerHeight - searchFieldHeight - buttonHeight;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 80.0, left: 30.0, right: 30.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomHeaderText(
-                  text: "Which country are you traveling to?",
-                  fontSize: 37,
-                  fontWeight: FontWeight.w600,
-                  textAlign: TextAlign.start,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 30.0, left: 30.0, right: 30.0, bottom: 20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header - Sabit yükseklik
+              SizedBox(
+                height: headerHeight,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomHeaderText(
+                      text: "Which country are you traveling to?",
+                      fontSize: screenSize.width < 360 ? 32 : 35,
+                      fontWeight: FontWeight.w600,
+                      textAlign: TextAlign.start,
+                    ),
+                    const SizedBox(height: 10),
+                  ],
                 ),
-                const SizedBox(height: 20),
-                CustomTextfield(
-                  controller: _searchController,
-                  prefix_icon: const Icon(Icons.search),
-                  hint_text: "Search Country",
+              ),
+              
+              // Search Field - Sabit yükseklik
+              SizedBox(
+                height: searchFieldHeight,
+                child: Column(
+                  children: [
+                    CustomTextfield(
+                      controller: _searchController,
+                      prefix_icon: const Icon(Icons.search),
+                      hint_text: "Search Country",
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  height: 340,
+              ),
+              
+              // Country List - Dinamik yükseklik
+              Expanded(
+                child: Container(
+                  height: listViewHeight > 200 ? listViewHeight : 200, // Minimum 200 yükseklik
                   child: ListView.builder(
                     itemCount: filteredCountries.length,
                     itemBuilder: (context, index) {
@@ -111,33 +140,35 @@ class _SelectCountryScreenState extends State<SelectCountryScreen> {
                     },
                   ),
                 ),
-                const SizedBox(height: 60),
-                CustomButton(
-                  onPressed: () {
-                    if (selectedCountry != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => SelectCurrencyScreen(
-                                countryName: selectedCountry!.name,
-                                countryFlag: selectedCountry!.flagEmoji,
-                              ),
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Lütfen bir ülke seçin.')),
-                      );
-                    }
-                  },
-                  text: "Continue",
-                  borderRadius: 12,
-                  width: double.infinity,
-                  height: 45,
-                ),
-              ],
-            ),
+              ),
+              
+              // Button - Sabit yükseklik (her zaman altta görünür)
+              const SizedBox(height: 20),
+              CustomButton(
+                onPressed: () {
+                  if (selectedCountry != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => SelectCurrencyScreen(
+                              countryName: selectedCountry!.name,
+                              countryFlag: selectedCountry!.flagEmoji,
+                            ),
+                      ),
+                    );                  
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Lütfen bir ülke seçin.')),
+                    );
+                  }
+                },
+                text: "Continue",
+                borderRadius: 12,
+                width: double.infinity,
+                height: 45,
+              ),
+            ],
           ),
         ),
       ),

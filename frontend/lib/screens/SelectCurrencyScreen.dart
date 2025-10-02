@@ -97,7 +97,8 @@ final Map<String, String> currencyToCountryCode = {
               ),
               const SizedBox(height: 20),
 
-              Expanded(
+              Container(  
+                height: 345,
   child: rates == null
       ? const Center(child: CircularProgressIndicator())
       : ListView(
